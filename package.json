@@ -1,0 +1,19 @@
+{
+  "name": "yaml-blaster",
+  "version": "1.0.0",
+  "description": "Framework for pre-processing yaml files",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/molesoft/yaml-blaster.git"
+  },
+  "author": "Adam Monica",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/molesoft/yaml-blaster/issues"
+  },
+  "homepage": "https://github.com/molesoft/yaml-blaster#readme"
+}
