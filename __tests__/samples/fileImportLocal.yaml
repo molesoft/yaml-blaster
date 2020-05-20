@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+{{instances[0], file:subTemplates/instance.yaml}}
+{{instances[1], file:subTemplates/instance.yaml}}
+Resources:
+  {{instances[0], file:subTemplates/instance.yaml}}
+  {{instances[1], file:subTemplates/instance.yaml}}
+  NotificationTopic:
+  - {{instances[0], file:subTemplates/instance.yaml}}
+  - {{instances[1], file:subTemplates/instance.yaml}}

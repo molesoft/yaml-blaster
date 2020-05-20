@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should expand loop statements 1`] = `
+"AWSTemplateFormatVersion: '2010-09-09'
+{{instances[0], file:subTemplates/instance.yaml}}
+{{instances[1], file:subTemplates/instance.yaml}}
+Resources:
+  {{instances[0], file:subTemplates/instance.yaml}}
+  {{instances[1], file:subTemplates/instance.yaml}}
+  NotificationTopic:
+  - {{instances[0], file:subTemplates/instance.yaml}}
+  - {{instances[1], file:subTemplates/instance.yaml}}"
+`;
+
+exports[`should flatten a complex object 1`] = `
+Object {
+  "baz.0.0": 1,
+  "baz.0.1": 2,
+  "baz.1.0": 3,
+  "baz.1.1": 4,
+  "baz.2.0.test.0": 4,
+  "baz.2.0.test.1": 5,
+  "baz.2.0.test.2.5": 6,
+  "foo": "bar",
+  "instances.0.name": "dog",
+  "instances.1.name": "cat",
+}
+`;
+
+exports[`should update var paths 1`] = `
+"
+  {{instances.0.name}}:
+  Type: AWS::EC2::Instance
+  Properties:
+    Size: {{instances.0.size}}
+    Cidr: {{instances.0.cidr}}
+  Tags: {{instances.0, file:subTemplates/subSubTemplates/tags.yaml}}
+  Foo: {{for:instances.0.tags, file:subTemplates/subSubTemplates/tags.yaml}}
+  "
+`;

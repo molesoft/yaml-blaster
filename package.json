@@ -15,5 +15,20 @@
   "bugs": {
     "url": "https://github.com/molesoft/yaml-blaster/issues"
   },
-  "homepage": "https://github.com/molesoft/yaml-blaster#readme"
+  "bin": {
+    "yaml-blaster": "./bin/index.js"
+  },
+  "homepage": "https://github.com/molesoft/yaml-blaster#readme",
+  "devDependencies": {
+    "jest": "^26.0.1",
+    "mocha": "^7.1.2"
+  },
+  "dependencies": {
+    "boxen": "^4.0.0",
+    "chalk": "^2.4.2",
+    "js-yaml": "^3.13.1",
+    "lodash.get": "^4.4.2",
+    "lodash.uniq": "^4.5.0",
+    "yargs": "^13.2.4"
+  }
 }

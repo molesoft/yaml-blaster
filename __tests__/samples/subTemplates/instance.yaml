@@ -1,0 +1,6 @@
+{{name}}:
+  Type: AWS::EC2::Instance
+  Properties:
+    Size: {{size}}
+    Cidr: {{cidr}}
+  Tags: {{file:subTemplates/subSubTemplates/tags.yaml}}
