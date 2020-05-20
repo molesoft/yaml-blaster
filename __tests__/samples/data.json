@@ -1,0 +1,30 @@
+{
+  "baz": "bazval",
+  "cat": "catval",
+  "cidr": "0.0.0.0/0",
+  "proto": "https",
+  "someMap": {
+    "baz": "mapbaz",
+    "cat": "mapcat"
+  },
+  "instances": [
+    {
+      "name": "dog",
+      "size": "big",
+      "cidr": "0.1.1.1",
+      "tags": {
+        "name": "tagname",
+        "val": "tagval"
+      }
+    },
+    {
+      "name": "cat",
+      "size": "real big",
+      "cidr": "0.2.2.2",
+      "tags": {
+        "name": "tagname2",
+        "val": "tagval2"
+      }
+    }
+  ]
+}
