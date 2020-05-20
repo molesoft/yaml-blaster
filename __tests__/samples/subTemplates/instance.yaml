@@ -3,4 +3,4 @@
   Properties:
     Size: {{size}}
     Cidr: {{cidr}}
-  Tags: {{file:subTemplates/subSubTemplates/tags.yaml}}
+  Tags: {{tags, file:subTemplates/subSubTemplates/tags.yaml}}

@@ -113,22 +113,7 @@ function padFragment(padding, fragment) {
   }
 }
 
-// const fragmentName = match.split('/').pop().split('.').shift()
-
-// const localVars = paddedFragment.match(matchers.localVar)
-// const fragmentPath = _fragmentPath ? [_fragmentPath, fragmentName].join('.') : fragmentName
-// const localData = get(data, fragmentPath)
-// console.log(fragmentPath)
-// if(localData && Array.isArray(localData)) {
-//   replaced = localData.reduce((s,localItem) => {
-//     return handleVars(s, localItem)
-//   }, paddedFragment)
-// } else {
-//   replaced = handleLocalVars(paddedFragment, localData)
-// }
-
 function loadFragment(joinedPath, match, parentFragment) {
-  console.log(match, parentFragment)
   let fragment = readFileSync(joinedPath, 'utf8')
   const padding = getPadding(parentFragment, match)
   const paddedFragment = padFragment(padding, fragment)
@@ -183,7 +168,12 @@ function updateVarPaths(fragment, varPath) {
   const varMatches = fragment.match(/{{[a-zA-Z0-9/]*}}/g) || []
   const fileMatches = fragment.match(/{{file:.*}}/g) || []
   const forMatches = fragment.match(/{{for:.*}}/g) || []
+  const existingPathMatches = fragment.match(/{{(?!for:).*,.*}}/g) || []
 
+  existingPathMatches.forEach(match => {
+    const newMatch = match.replace('{{',`{{${varPath}.`)
+    newFragment = newFragment.replace(match,newMatch)
+  })
   varMatches.forEach(match => {
     const newMatch = match.replace('{{',`{{${varPath}.`)
     newFragment = newFragment.replace(match,newMatch)
@@ -206,6 +196,9 @@ function handleFile(match, idx, fragment, data, inputhPath) {
   const joinedPath = join(inputhPath, filePath)
   const fileFragment = loadFragment(joinedPath, match, fragment)
   const pathsUpdated = updateVarPaths(fileFragment, varPath)
+  if(filePath === 'subTemplates/subSubTemplates/tags.yaml') {
+    console.log(varPath)
+  }
   return fragment.replace(match, pathsUpdated)
 }
 
