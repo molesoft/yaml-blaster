@@ -196,9 +196,6 @@ function handleFile(match, idx, fragment, data, inputhPath) {
   const joinedPath = join(inputhPath, filePath)
   const fileFragment = loadFragment(joinedPath, match, fragment)
   const pathsUpdated = updateVarPaths(fileFragment, varPath)
-  if(filePath === 'subTemplates/subSubTemplates/tags.yaml') {
-    console.log(varPath)
-  }
   return fragment.replace(match, pathsUpdated)
 }
 

@@ -1,68 +1,8 @@
 const {blaster, expandLoopStatements, handleFilesLocal, flatten, handleEverything, updateVarPaths, go} = require('../bin/blaster')
 const {join} = require('path')
 const {readFileSync} = require('fs')
-it('should win', async () => {
-  const data = {
-    proto: 'mygreatnewproto',
-    cidr: 'mygreatnewcidr',
-    tagName: 'tagname',
-    tagVal: 'tagval',
-    instances: [
-      {
-        name: 'dog',
-        size: '1',
-        cidr: '2',
-        tags: {
-          name: 'tag1',
-          val: 'tag1'
-        }
-      },
-      {
-        name: 'cat',
-        size: '2',
-        cidr: '3',
-        tags: {
-          name: 'tag2',
-          val: 'tag3'
-        }
-      }
-    ]
-  }
-  const inputFile = join(__dirname,'samples/template.yaml')
-  const inputPath = join(__dirname,'samples')
-  const input = readFileSync(inputFile, 'utf8')
-  const result = blaster(input, inputPath, data, '  ')
-  console.log(result)
-  return
-})
-it('should expand loop statements', async () => {
-  const data = {
-    instances: [
-      { name: 'dog'  },
-      { name: 'cat' }
-    ]
-  }
-  const inputFile = join(__dirname,'samples/loop.yaml')
-  const input = readFileSync(inputFile, 'utf8')
-  const result = expandLoopStatements(input, data, '  ')
-  expect(result).toMatchSnapshot()
-})
-it.skip('should import files with local data', async () => {
-  const data = {
-    instances: [
-      { name: 'dog'  },
-      { name: 'cat' }
-    ]
-  }
-  const inputPath = join(__dirname,'samples')
-  const inputFile = join(inputPath, 'fileImportLocal.yaml')
-  const input = readFileSync(inputFile, 'utf8')
-  const result = handleFilesLocal(input, data, inputPath, '  ')
-  console.log(result)
-  // expect(result).toMatchSnapshot()
-})
 
-it.only('should handle mutliple stages', async () => {
+it('should handle mutliple stages', async () => {
   const data = {
     baz: 'bazval',
     cat: 'catval',
@@ -97,8 +37,7 @@ it.only('should handle mutliple stages', async () => {
   const inputFile = join(inputPath, 'template.yaml')
   const input = readFileSync(inputFile, 'utf8')
   const result = go(input, data, inputPath)
-  console.log(result)
-  // expect(result).toMatchSnapshot()
+  expect(result).toMatchSnapshot()
 })
 
 it('should update var paths', async () => {
