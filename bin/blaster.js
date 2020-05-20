@@ -252,13 +252,17 @@ function flatten(obj, agg = {}, pth = '') {
   }
 }
 
+function fixMultiLeadingDots(fragment) {
+  return fragment.replace(/{{\.+/g, '{{')
+}
+
 const go = (fragment, data, inputhPath) => {
   const deCommented = deComment(fragment)
   const replaced = handleEverything(deCommented, data, inputhPath)
+  const dotsFixed = fixMultiLeadingDots(replaced)
   const flatData = flatten(data)
-  return handleVars(replaced, flatData)
+  return handleVars(dotsFixed, flatData)
 }
-// TODO: flatten the data object and update the vars so we only have to handle var replacement once
 
 module.exports = {
   go,

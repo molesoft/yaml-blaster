@@ -11,6 +11,7 @@ Resources:
           Ref: {{proto}}
         Protocol: {{proto}}
       - {{file:subTemplates/aThing.yaml}}
+      - {{someMap, file:subTemplates/aThing.yaml}}
   ELBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

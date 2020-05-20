@@ -64,8 +64,14 @@ it.skip('should import files with local data', async () => {
 
 it.only('should handle mutliple stages', async () => {
   const data = {
+    baz: 'bazval',
+    cat: 'catval',
     cidr: '0.0.0.0/0',
     proto: 'https',
+    someMap: {
+      baz: 'mapbaz',
+      cat: 'mapcat'
+    },
     instances: [
       {
         name: 'dog',
