@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "npx jest",
-    "build": "webpack --mode production"
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push && git push --tags && rm -rf build/temp"
   },
   "repository": {
     "type": "git",
@@ -21,11 +23,7 @@
   },
   "homepage": "https://github.com/molesoft/yaml-blaster#readme",
   "devDependencies": {
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "jest": "^26.0.1",
-    "lodash": "^4.17.15",
-    "mocha": "^7.1.2",
-    "webpack": "^4.43.0"
+    "jest": "^26.0.1"
   },
   "dependencies": {
     "boxen": "^4.0.0",

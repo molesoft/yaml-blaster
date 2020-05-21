@@ -1,3 +1,8 @@
+/*
+ * This file is subject to the terms and conditions defined in
+ * file 'LICENSE', which is part of this source code package.
+ */
+
 const {readFileSync, writeFileSync} = require('fs')
 const yaml = require('js-yaml')
 const uniq = require('lodash.uniq')
