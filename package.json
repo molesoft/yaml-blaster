@@ -1,11 +1,12 @@
 {
   "name": "yaml-blaster",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Framework for pre-processing yaml files",
   "main": "index.js",
   "scripts": {
     "test": "npx jest",
-    "preversion": "npm test"
+    "preversion": "npm test && git add .",
+    "postversion": "git add . && git commit --amend && git push"
   },
   "repository": {
     "type": "git",

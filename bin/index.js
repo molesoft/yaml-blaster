@@ -14,7 +14,7 @@ const {go} = require('./blaster')
 const yaml = require('js-yaml')
 
 const args = yargs
-  .usage("Usage: -i <input path> -d <data path> -0 <output path>")
+  .usage("Usage: yaml-blaster -i <input path> -d <data path> -0 <output path>")
   .option("i", { alias: "input", describe: "Input file path", type: "string", demandOption: true })
   .option("d", { alias: "data", describe: "Data file path", type: "string", demandOption: true })
   .option("o", { alias: "out", describe: "Output file path", type: "string", demandOption: false })
