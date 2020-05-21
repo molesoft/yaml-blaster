@@ -1,5 +1,7 @@
 const path = require('path');
+const webpack = require('webpack')
 var nodeExternals = require('webpack-node-externals');
+
 
 module.exports = {
   entry: {
@@ -24,7 +26,10 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-proposal-class-properties']
+            plugins: [
+              '@babel/plugin-proposal-class-properties',
+              new webpack.BannerPlugin('#!/usr/bin/env node')
+            ]
           }
         }
       }
