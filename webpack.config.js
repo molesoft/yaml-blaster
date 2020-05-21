@@ -27,8 +27,7 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env'],
             plugins: [
-              '@babel/plugin-proposal-class-properties',
-              new webpack.BannerPlugin('#!/usr/bin/env node')
+              '@babel/plugin-proposal-class-properties'
             ]
           }
         }
