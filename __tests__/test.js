@@ -1,6 +1,20 @@
-const {blaster, expandLoopStatements, handleFilesLocal, flatten, handleEverything, updateVarPaths, go} = require('../bin/blaster')
+const Blaster = require('../dist/blaster')
 const {join} = require('path')
-const {readFileSync} = require('fs')
+const {readFileSync, unlinkSync} = require('fs')
+const uuid = require('uuid')
+
+it('should have a cli interface that works', () => {
+  const argvBackup = [...process.argv]
+  const args = [...process.argv]
+  const tmpPath = `/tmp/${uuid.v4()}`
+  args.push('-i', '__tests__/samples/template.yaml', '-d', '__tests__/samples/data.json', '-o', tmpPath)
+  process.argv = args
+  require('../dist/cli')
+  process.argv = argvBackup
+  const result = readFileSync(tmpPath, 'utf8')
+  expect(result).toMatchSnapshot()
+  unlinkSync(tmpPath)
+})
 
 it('should handle mutliple stages', async () => {
   const data = {
@@ -36,7 +50,8 @@ it('should handle mutliple stages', async () => {
   const inputPath = join(__dirname,'samples')
   const inputFile = join(inputPath, 'template.yaml')
   const input = readFileSync(inputFile, 'utf8')
-  const result = go(input, data, inputPath)
+  const yb = new Blaster(input, data, inputPath)
+  const result = yb.process(input, data, inputPath)
   expect(result).toMatchSnapshot()
 })
 
@@ -50,8 +65,8 @@ it('should update var paths', async () => {
   Tags: {{file:subTemplates/subSubTemplates/tags.yaml}}
   Foo: {{for:tags, file:subTemplates/subSubTemplates/tags.yaml}}
   `
-  const result = updateVarPaths(fragment, 'instances.0')
-  // console.log(result)
+  const yb = new Blaster(fragment)
+  const result = yb.updateVarPaths(fragment, 'instances.0')
   expect(result).toMatchSnapshot()
 })
 
@@ -72,6 +87,7 @@ it('should flatten a complex object', async () => {
       }]
     ]
   }
-  const result = flatten(data)
+  const yb = new Blaster('')
+  const result = yb.flatten(data)
   expect(result).toMatchSnapshot()
 })

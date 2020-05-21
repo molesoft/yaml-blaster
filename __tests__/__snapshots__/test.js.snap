@@ -103,6 +103,94 @@ Outputs:
       - DNSName"
 `;
 
+exports[`should have a cli interface that works 1`] = `
+"AWSTemplateFormatVersion: '2010-09-09'
+dog:
+  Type: AWS::EC2::Instance
+  Properties:
+    Size: big
+    Cidr: 0.1.1.1
+  Tags: 
+    Name: tagname
+    Value: tagval
+cat:
+  Type: AWS::EC2::Instance
+  Properties:
+    Size: real big
+    Cidr: 0.2.2.2
+  Tags: 
+    Name: tagname2
+    Value: tagval2
+Resources:
+  dog:
+    Type: AWS::EC2::Instance
+    Properties:
+      Size: big
+      Cidr: 0.1.1.1
+    Tags: 
+      Name: tagname
+      Value: tagval
+  cat:
+    Type: AWS::EC2::Instance
+    Properties:
+      Size: real big
+      Cidr: 0.2.2.2
+    Tags: 
+      Name: tagname2
+      Value: tagval2
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+      - dog:
+          Type: AWS::EC2::Instance
+          Properties:
+            Size: big
+            Cidr: 0.1.1.1
+          Tags: 
+            Name: tagname
+            Value: tagval
+      - cat:
+          Type: AWS::EC2::Instance
+          Properties:
+            Size: real big
+            Cidr: 0.2.2.2
+          Tags: 
+            Name: tagname2
+            Value: tagval2
+      - Endpoint:
+          Ref: https
+        Protocol: https
+      - Foo:
+          Bar: bazval
+          Dog: catval
+      - Foo:
+          Bar: mapbaz
+          Dog: mapcat
+  ELBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow access to the ELB
+      VpcId:
+        Ref: VPCID
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '443'
+        ToPort: '443'
+        CidrIp: 0.0.0.0/0
+Outputs:
+  ELBDNSName:
+    Description: ELB DNS Name
+    Value:
+      Fn::GetAtt:
+      - ElasticLoadBalancer
+      - DNSName"
+`;
+
 exports[`should update var paths 1`] = `
 "
   {{instances.0.name}}:

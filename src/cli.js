@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
  * This file is subject to the terms and conditions defined in
  * file 'LICENSE', which is part of this source code package.
@@ -10,7 +8,7 @@ const {join} = require('path')
 const yargs = require('yargs')
 const chalk = require('chalk')
 const boxen = require('boxen')
-const {go} = require('./blaster')
+const Blaster = require('./blaster')
 const yaml = require('js-yaml')
 
 const args = yargs
@@ -34,7 +32,8 @@ try {
   data = yaml.safeLoad(dataString)
 }
 
-const processed = go(input, data, inputDir)
+const yb = new Blaster(input, data, inputDir)
+const processed = yb.process(input, data, inputDir)
 if(args.out) {
   const outPath = args.out.startsWith('/') ? args.out : join(relDir, args.out)
   writeFileSync(outPath, processed)
