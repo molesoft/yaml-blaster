@@ -31,6 +31,9 @@
     "lodash.uniq": "^4.5.0",
     "yargs": "^13.2.4"
   },
+  "files": [
+    "/bin"
+  ],
   "keywords": [
     "yaml",
     "aws",
