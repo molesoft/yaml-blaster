@@ -1,6 +1,6 @@
 {
   "name": "yaml-blaster",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Framework for pre-processing yaml files",
   "main": "index.js",
   "scripts": {
