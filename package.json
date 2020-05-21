@@ -30,5 +30,17 @@
     "lodash.get": "^4.4.2",
     "lodash.uniq": "^4.5.0",
     "yargs": "^13.2.4"
-  }
+  },
+  "keywords": [
+    "yaml",
+    "aws",
+    "cloudformation",
+    "parser",
+    "load",
+    "file",
+    "modular",
+    "replace",
+    "resolve",
+    "variables"
+  ]
 }
