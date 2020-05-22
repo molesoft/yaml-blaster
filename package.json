@@ -1,16 +1,15 @@
 {
   "name": "yaml-blaster",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Framework for pre-processing yaml files",
   "main": "dist/blaster.js",
   "scripts": {
     "test": "npx jest",
-    "clean": "rm -rd dist",
+    "clean": "rm -rf dist",
     "shrink": "npm prune --production && npm shrinkwrap",
     "build": "npx webpack --mode production && sh scripts/add_hashbang.sh",
-    "preversion": "npm test && npm run clean && npm run build",
-    "postversion": "git add . && git commit --amend && git push",
-    "publish": "npm run shrink && npm publish"
+    "preversion": "npm run clean && npm run build && npm test",
+    "postversion": "git add . && git commit --amend && git push"
   },
   "repository": {
     "type": "git",
