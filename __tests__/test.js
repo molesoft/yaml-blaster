@@ -1,7 +1,19 @@
 const Blaster = require('../dist/blaster')
 const {join} = require('path')
 const {readFileSync, unlinkSync} = require('fs')
+const yaml = require('js-yaml')
 const uuid = require('uuid')
+
+it('should handle complex comments and multiple vars on the same line', () => {
+  const inputPath = join(__dirname,'sample2')
+  const inputFile = join(inputPath, 'template.yaml')
+  const dataPath = join(inputPath, 'data.yaml')
+  const data = yaml.safeLoad(readFileSync(dataPath,'utf8'))
+  const input = readFileSync(inputFile, 'utf8')
+  const yb = new Blaster(input, data, inputPath)
+  const result = yb.process(input, data, inputPath)
+  expect(result).toMatchSnapshot()
+})
 
 it('should have a cli interface that works', () => {
   const argvBackup = [...process.argv]
@@ -12,8 +24,8 @@ it('should have a cli interface that works', () => {
   require('../dist/cli')
   process.argv = argvBackup
   const result = readFileSync(tmpPath, 'utf8')
-  expect(result).toMatchSnapshot()
   unlinkSync(tmpPath)
+  expect(result).toMatchSnapshot()
 })
 
 it('should handle mutliple stages', async () => {

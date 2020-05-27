@@ -1,0 +1,19 @@
+{{type}}Subnet{{zone}}:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId:
+      Ref: {{vpc}}
+    CidrBlock: {{cidr}}
+    AvailabilityZone:
+      Fn::Sub: {{.region}}{{zone}}
+    Tags:
+    - Key: Name
+      Value:
+        Fn::Sub: ${AWS::StackName}-{{.region}}-{{zone}}-{{type}}
+{{type}}Subnet{{zone}}Association:
+  Type: AWS::EC2::SubnetRouteTableAssociation
+  Properties:
+    SubnetId:
+      Ref: {{type}}Subnet{{zone}}
+    RouteTableId:
+      Ref: {{type}}RouteTable

@@ -17,7 +17,7 @@ class Blaster {
 
   #matchers = {
     tabChar: new RegExp('(?<=\\n)(?!\\n)\\s*(?=.*)', 'g'),
-    var: new RegExp('(?<={{).*(?=}})','g'),
+    var: new RegExp('(?<={{).[^{}]*(?=}})','g'),
     file: new RegExp('{{(?!for:).*,\\s*file:.*}}'),
     filePath: new RegExp('(?<=file:).*(?=}})'),
     localFile: new RegExp('{{.*\[[0-9]*\],.*file:.*}}'),
@@ -26,7 +26,7 @@ class Blaster {
       full: new RegExp('{{.*\[[0-9]*\],.*file:.*}}'),
       varPath: new RegExp('(?<={{).*(?=,.*file:.*}})')
     },
-    comments: new RegExp('(\n[\\s]*#.*[\n])', 'g'),
+    comments: new RegExp('(\n|#*[\\s]*#.*[\n])', 'g'),
     localVar: new RegExp('(?<={{.*\\.).*(?=.*}})', 'g'),
     loop: new RegExp('(?<={{for:.*).*(?=.*}})'),
     forFile: new RegExp('(?<={{for:.*,\\s*file:).*(?=.*}})'),
@@ -191,7 +191,6 @@ class Blaster {
     const fileMatches = fragment.match(/{{file:.*}}/g) || []
     const forMatches = fragment.match(/{{for:.*}}/g) || []
     const existingPathMatches = fragment.match(/{{(?!for:).*,.*}}/g) || []
-  
     existingPathMatches.forEach(match => {
       const newMatch = match.replace('{{',`{{${varPath}.`)
       newFragment = newFragment.replace(match,newMatch)

@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Setup for network resources
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: 10.0.0.0/16 # 10.0.0.0 - 10.0.255.255 | 65,536 addresses
+      EnableDnsHostnames: 'true'
+      EnableDnsSupport: 'true'
+      InstanceTenancy: 'default'
+      Tags:
+        - {{for:tags.vpc, file:nameTag.yaml}}
+
+  {{for:subnets, file:subnet.yaml}}
+
+  ###### Public Setup ######
+  ###########################
+
+  # Gives a route to the internet for resources that already have a public IP address
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - {{for:tags.igw, file:nameTag.yaml}}
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: VPC
+      Tags:
+        - {{for:tags.publicTable, file:nameTag.yaml}}
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+        RouteTableId:
+          Ref: PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId:
+          Ref: InternetGateway

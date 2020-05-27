@@ -15,6 +15,83 @@ Object {
 }
 `;
 
+exports[`should handle complex comments and multiple vars on the same line 1`] = `
+"AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Setup for network resources
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties: 
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: 'true'
+      EnableDnsSupport: 'true'
+      InstanceTenancy: 'default'
+      Tags:
+        - Key: Name
+          Value:
+            Fn::Sub: \${AWS::StackName}-uscc-vpc
+
+  PublicSubneta:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: VPC
+      CidrBlock: 10.0.0.0/20
+      AvailabilityZone:
+        Fn::Sub: us-east-1a
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Sub: \${AWS::StackName}-us-east-1-a-Public
+  PublicSubnetaAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubneta
+      RouteTableId:
+        Ref: PublicRouteTable
+
+
+
+
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value:
+            Fn::Sub: \${AWS::StackName}-uscc-igw
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: VPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: VPC
+      Tags:
+        - Key: Name
+          Value:
+            Fn::Sub: \${AWS::StackName}-public-table
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+        RouteTableId:
+          Ref: PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId:
+          Ref: InternetGateway
+"
+`;
+
 exports[`should handle mutliple stages 1`] = `
 "AWSTemplateFormatVersion: '2010-09-09'
 dog:

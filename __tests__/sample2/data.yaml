@@ -1,0 +1,21 @@
+tags:
+  vpc:
+    - name: uscc-vpc
+  igw:
+    - name: uscc-igw
+  publicTable:
+    - name: public-table
+region: us-east-1
+subnets:
+  - vpc: VPC
+    zone: a
+    cidr: 10.0.0.0/20
+    type: Public
+  # - vpc: VPC
+  #   zone: b
+  #   cidr: 10.0.16.0/20
+  #   type: Private
+  # - vpc: VPC
+  #   zone: c
+  #   cidr: 10.0.32.0/20
+  #   type: Private
