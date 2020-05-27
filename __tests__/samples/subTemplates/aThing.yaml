@@ -1,3 +1,4 @@
 Foo:
   Bar: {{baz}}
   Dog: {{cat}}
+  ParamTest2: {{.myKey2}}

@@ -262,11 +262,16 @@ class Blaster {
     return fragment.replace(/{{\.+/g, '{{')
   }
 
-  process(fragment, data, inputhPath) {
+  process(fragment, data, inputhPath, addlParams) {
     const deCommented = this.deComment(fragment)
     const replaced = this.handleEverything(deCommented, data, inputhPath)
     const dotsFixed = this.fixMultiLeadingDots(replaced)
     const flatData = this.flatten(data)
+    if(addlParams) {
+      addlParams.forEach(param => {
+        flatData[param.key] = param.val
+      })
+    }
     const varsHandled = this.handleVars(dotsFixed, flatData)
     return yaml.safeDump(yaml.safeLoad(varsHandled))
   }

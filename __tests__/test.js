@@ -19,7 +19,7 @@ it('should have a cli interface that works', () => {
   const argvBackup = [...process.argv]
   const args = [...process.argv]
   const tmpPath = `/tmp/${uuid.v4()}`
-  args.push('-i', '__tests__/samples/template.yaml', '-d', '__tests__/samples/data.json', '-o', tmpPath)
+  args.push('-i', '__tests__/samples/template.yaml', '-d', '__tests__/samples/data.json', '-o', tmpPath, '-p', 'myKey=myVal,myKey2=myVal2')
   process.argv = args
   require('../dist/cli')
   process.argv = argvBackup
@@ -101,5 +101,29 @@ it('should flatten a complex object', async () => {
   }
   const yb = new Blaster('')
   const result = yb.flatten(data)
+  expect(result).toMatchSnapshot()
+})
+
+it('should handle additional params', async () => {
+  const data = {
+    foo: 'bar'
+  }
+  const input = `
+  Test: {{myKey}}
+  Test2: {{myKey2}}
+  Test3: {{foo}}
+  `
+  const params = [
+    {
+      key: 'myKey',
+      val: 'myVal'
+    },
+    {
+      key: 'myKey2',
+      val: 'myVal2'
+    }
+  ]
+  const yb = new Blaster(input, data, null)
+  const result = yb.process(input, data, null, params)
   expect(result).toMatchSnapshot()
 })

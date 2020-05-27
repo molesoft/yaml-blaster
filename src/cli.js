@@ -16,6 +16,7 @@ const args = yargs
   .option("i", { alias: "input", describe: "Input file path", type: "string", demandOption: true })
   .option("d", { alias: "data", describe: "Data file path", type: "string", demandOption: true })
   .option("o", { alias: "out", describe: "Output file path", type: "string", demandOption: false })
+  .option("p", { alias: "params", describe: "Additional parameters (ex: key1=val1,key2=val2)", type: "string", demandOption: false })
   .argv
 
 const relDir = process.cwd()
@@ -32,8 +33,22 @@ try {
   data = yaml.safeLoad(dataString)
 }
 
+let params
+if(args.params) {
+  try {
+    params = args.params.split(',').map(param => {
+      const keyVal = param.split('=')
+      return {
+        key: keyVal[0],
+        val: keyVal[1]
+      }
+    })
+  } catch(err) {
+    throw new Error('Please supply params in the following format: key=val,key2=val2')
+  }
+}
 const yb = new Blaster(input, data, inputDir)
-const processed = yb.process(input, data, inputDir)
+const processed = yb.process(input, data, inputDir, params)
 if(args.out) {
   const outPath = args.out.startsWith('/') ? args.out : join(relDir, args.out)
   writeFileSync(outPath, processed)

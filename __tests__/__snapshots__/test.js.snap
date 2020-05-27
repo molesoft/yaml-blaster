@@ -15,6 +15,13 @@ Object {
 }
 `;
 
+exports[`should handle additional params 1`] = `
+"Test: myVal
+Test2: myVal2
+Test3: bar
+"
+`;
+
 exports[`should handle complex comments and multiple vars on the same line 1`] = `
 "AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
@@ -145,9 +152,12 @@ Resources:
         - Foo:
             Bar: bazval
             Dog: catval
+            ParamTest2: undefined
         - Foo:
             Bar: mapbaz
             Dog: mapcat
+            ParamTest2: undefined
+  ParamTest: undefined
   ELBSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -234,9 +244,12 @@ Resources:
         - Foo:
             Bar: bazval
             Dog: catval
+            ParamTest2: myVal2
         - Foo:
             Bar: mapbaz
             Dog: mapcat
+            ParamTest2: myVal2
+  ParamTest: myVal
   ELBSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
