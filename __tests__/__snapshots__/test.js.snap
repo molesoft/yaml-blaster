@@ -17,255 +17,249 @@ Object {
 
 exports[`should handle complex comments and multiple vars on the same line 1`] = `
 "AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
+Transform: 'AWS::Serverless-2016-10-31'
 Description: Setup for network resources
 Resources:
   VPC:
-    Type: AWS::EC2::VPC
-    Properties: 
+    Type: 'AWS::EC2::VPC'
+    Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsHostnames: 'true'
       EnableDnsSupport: 'true'
-      InstanceTenancy: 'default'
+      InstanceTenancy: default
       Tags:
         - Key: Name
           Value:
-            Fn::Sub: \${AWS::StackName}-uscc-vpc
-
+            'Fn::Sub': '\${AWS::StackName}-uscc-vpc'
   PublicSubneta:
-    Type: AWS::EC2::Subnet
+    Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId:
         Ref: VPC
       CidrBlock: 10.0.0.0/20
       AvailabilityZone:
-        Fn::Sub: us-east-1a
+        'Fn::Sub': us-east-1a
       Tags:
-      - Key: Name
-        Value:
-          Fn::Sub: \${AWS::StackName}-us-east-1-a-Public
+        - Key: Name
+          Value:
+            'Fn::Sub': '\${AWS::StackName}-us-east-1-a-Public'
   PublicSubnetaAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       SubnetId:
         Ref: PublicSubneta
       RouteTableId:
         Ref: PublicRouteTable
-
-
-
-
-
   InternetGateway:
-    Type: AWS::EC2::InternetGateway
+    Type: 'AWS::EC2::InternetGateway'
     Properties:
       Tags:
         - Key: Name
           Value:
-            Fn::Sub: \${AWS::StackName}-uscc-igw
+            'Fn::Sub': '\${AWS::StackName}-uscc-igw'
   AttachGateway:
-    Type: AWS::EC2::VPCGatewayAttachment
+    Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
       VpcId:
         Ref: VPC
       InternetGatewayId:
         Ref: InternetGateway
-
   PublicRouteTable:
-    Type: AWS::EC2::RouteTable
+    Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId:  
+      VpcId:
         Ref: VPC
       Tags:
         - Key: Name
           Value:
-            Fn::Sub: \${AWS::StackName}-public-table
-
+            'Fn::Sub': '\${AWS::StackName}-public-table'
   PublicRoute:
-    Type: AWS::EC2::Route
+    Type: 'AWS::EC2::Route'
     Properties:
-        RouteTableId:
-          Ref: PublicRouteTable
-        DestinationCidrBlock: 0.0.0.0/0
-        GatewayId:
-          Ref: InternetGateway
+      RouteTableId:
+        Ref: PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
 "
 `;
 
 exports[`should handle mutliple stages 1`] = `
 "AWSTemplateFormatVersion: '2010-09-09'
 dog:
-  Type: AWS::EC2::Instance
+  Type: 'AWS::EC2::Instance'
   Properties:
     Size: big
     Cidr: 0.1.1.1
-  Tags: 
+  Tags:
     Name: tagname
     Value: tagval
 cat:
-  Type: AWS::EC2::Instance
+  Type: 'AWS::EC2::Instance'
   Properties:
     Size: real big
     Cidr: 0.2.2.2
-  Tags: 
+  Tags:
     Name: tagname2
     Value: tagval2
 Resources:
   dog:
-    Type: AWS::EC2::Instance
+    Type: 'AWS::EC2::Instance'
     Properties:
       Size: big
       Cidr: 0.1.1.1
-    Tags: 
+    Tags:
       Name: tagname
       Value: tagval
   cat:
-    Type: AWS::EC2::Instance
+    Type: 'AWS::EC2::Instance'
     Properties:
       Size: real big
       Cidr: 0.2.2.2
-    Tags: 
+    Tags:
       Name: tagname2
       Value: tagval2
   NotificationTopic:
-    Type: AWS::SNS::Topic
+    Type: 'AWS::SNS::Topic'
     Properties:
       Subscription:
-      - dog:
-          Type: AWS::EC2::Instance
-          Properties:
-            Size: big
-            Cidr: 0.1.1.1
-          Tags: 
-            Name: tagname
-            Value: tagval
-      - cat:
-          Type: AWS::EC2::Instance
-          Properties:
-            Size: real big
-            Cidr: 0.2.2.2
-          Tags: 
-            Name: tagname2
-            Value: tagval2
-      - Endpoint:
-          Ref: https
-        Protocol: https
-      - Foo:
-          Bar: bazval
-          Dog: catval
-      - Foo:
-          Bar: mapbaz
-          Dog: mapcat
+        - dog:
+            Type: 'AWS::EC2::Instance'
+            Properties:
+              Size: big
+              Cidr: 0.1.1.1
+            Tags:
+              Name: tagname
+              Value: tagval
+        - cat:
+            Type: 'AWS::EC2::Instance'
+            Properties:
+              Size: real big
+              Cidr: 0.2.2.2
+            Tags:
+              Name: tagname2
+              Value: tagval2
+        - Endpoint:
+            Ref: https
+          Protocol: https
+        - Foo:
+            Bar: bazval
+            Dog: catval
+        - Foo:
+            Bar: mapbaz
+            Dog: mapcat
   ELBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+    Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Allow access to the ELB
       VpcId:
         Ref: VPCID
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: '80'
-        ToPort: '80'
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: '443'
-        ToPort: '443'
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
 Outputs:
   ELBDNSName:
     Description: ELB DNS Name
     Value:
-      Fn::GetAtt:
-      - ElasticLoadBalancer
-      - DNSName"
+      'Fn::GetAtt':
+        - ElasticLoadBalancer
+        - DNSName
+"
 `;
 
 exports[`should have a cli interface that works 1`] = `
 "AWSTemplateFormatVersion: '2010-09-09'
 dog:
-  Type: AWS::EC2::Instance
+  Type: 'AWS::EC2::Instance'
   Properties:
     Size: big
     Cidr: 0.1.1.1
-  Tags: 
+  Tags:
     Name: tagname
     Value: tagval
 cat:
-  Type: AWS::EC2::Instance
+  Type: 'AWS::EC2::Instance'
   Properties:
     Size: real big
     Cidr: 0.2.2.2
-  Tags: 
+  Tags:
     Name: tagname2
     Value: tagval2
 Resources:
   dog:
-    Type: AWS::EC2::Instance
+    Type: 'AWS::EC2::Instance'
     Properties:
       Size: big
       Cidr: 0.1.1.1
-    Tags: 
+    Tags:
       Name: tagname
       Value: tagval
   cat:
-    Type: AWS::EC2::Instance
+    Type: 'AWS::EC2::Instance'
     Properties:
       Size: real big
       Cidr: 0.2.2.2
-    Tags: 
+    Tags:
       Name: tagname2
       Value: tagval2
   NotificationTopic:
-    Type: AWS::SNS::Topic
+    Type: 'AWS::SNS::Topic'
     Properties:
       Subscription:
-      - dog:
-          Type: AWS::EC2::Instance
-          Properties:
-            Size: big
-            Cidr: 0.1.1.1
-          Tags: 
-            Name: tagname
-            Value: tagval
-      - cat:
-          Type: AWS::EC2::Instance
-          Properties:
-            Size: real big
-            Cidr: 0.2.2.2
-          Tags: 
-            Name: tagname2
-            Value: tagval2
-      - Endpoint:
-          Ref: https
-        Protocol: https
-      - Foo:
-          Bar: bazval
-          Dog: catval
-      - Foo:
-          Bar: mapbaz
-          Dog: mapcat
+        - dog:
+            Type: 'AWS::EC2::Instance'
+            Properties:
+              Size: big
+              Cidr: 0.1.1.1
+            Tags:
+              Name: tagname
+              Value: tagval
+        - cat:
+            Type: 'AWS::EC2::Instance'
+            Properties:
+              Size: real big
+              Cidr: 0.2.2.2
+            Tags:
+              Name: tagname2
+              Value: tagval2
+        - Endpoint:
+            Ref: https
+          Protocol: https
+        - Foo:
+            Bar: bazval
+            Dog: catval
+        - Foo:
+            Bar: mapbaz
+            Dog: mapcat
   ELBSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+    Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Allow access to the ELB
       VpcId:
         Ref: VPCID
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: '80'
-        ToPort: '80'
-        CidrIp: 0.0.0.0/0
-      - IpProtocol: tcp
-        FromPort: '443'
-        ToPort: '443'
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
 Outputs:
   ELBDNSName:
     Description: ELB DNS Name
     Value:
-      Fn::GetAtt:
-      - ElasticLoadBalancer
-      - DNSName"
+      'Fn::GetAtt':
+        - ElasticLoadBalancer
+        - DNSName
+"
 `;
 
 exports[`should update var paths 1`] = `

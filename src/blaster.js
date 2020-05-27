@@ -267,7 +267,8 @@ class Blaster {
     const replaced = this.handleEverything(deCommented, data, inputhPath)
     const dotsFixed = this.fixMultiLeadingDots(replaced)
     const flatData = this.flatten(data)
-    return this.handleVars(dotsFixed, flatData)
+    const varsHandled = this.handleVars(dotsFixed, flatData)
+    return yaml.safeDump(yaml.safeLoad(varsHandled))
   }
 
 }
