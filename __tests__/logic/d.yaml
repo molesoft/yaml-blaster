@@ -1,0 +1,6 @@
+bar: barrrrr
+baz: bazzzzz
+stage: dev
+items:
+  - dog: true
+    cat: meow

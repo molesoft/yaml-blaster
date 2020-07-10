@@ -91,6 +91,26 @@ Resources:
 "
 `;
 
+exports[`should handle expressions 1`] = `
+"Foo: barrrrr
+Baz: bazzzzz
+Bar:
+  dog: yay
+  cat: nay
+Bar2:
+  dog: yay
+  cat: nay
+Bar3: barrrrr
+dog: yay
+cat: nay
+asdf:
+  dog: yay
+  cat: nay
+subTest:
+  answer: not meow
+"
+`;
+
 exports[`should handle mutliple stages 1`] = `
 "AWSTemplateFormatVersion: '2010-09-09'
 dog:

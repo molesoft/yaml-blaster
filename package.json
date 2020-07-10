@@ -1,6 +1,6 @@
 {
   "name": "yaml-blaster",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Framework for pre-processing yaml files",
   "main": "dist/blaster.js",
   "scripts": {
@@ -39,6 +39,7 @@
   "dependencies": {
     "boxen": "^4.0.0",
     "chalk": "^2.4.2",
+    "jexl": "^2.2.2",
     "js-yaml": "^3.13.1",
     "lodash.get": "^4.4.2",
     "lodash.uniq": "^4.5.0",

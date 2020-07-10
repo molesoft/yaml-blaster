@@ -4,6 +4,17 @@ const {readFileSync, unlinkSync} = require('fs')
 const yaml = require('js-yaml')
 const uuid = require('uuid')
 
+it('should handle expressions', () => {
+  const inputPath = join(__dirname,'logic')
+  const inputFile = join(inputPath, 't.yaml')
+  const dataPath = join(inputPath, 'd.yaml')
+  const data = yaml.safeLoad(readFileSync(dataPath,'utf8'))
+  const input = readFileSync(inputFile, 'utf8')
+  const yb = new Blaster(input, data, inputPath)
+  const result = yb.process(input, data, inputPath)
+  expect(result).toMatchSnapshot()
+})
+
 it('should handle complex comments and multiple vars on the same line', () => {
   const inputPath = join(__dirname,'sample2')
   const inputFile = join(inputPath, 'template.yaml')
@@ -126,4 +137,20 @@ it('should handle additional params', async () => {
   const yb = new Blaster(input, data, null)
   const result = yb.process(input, data, null, params)
   expect(result).toMatchSnapshot()
+})
+
+it.skip('should handle functions', async () => {
+  const data = {
+    foo: 'bar'
+  }
+  const input = `
+  Test: {{$epoch}}
+  Test2: {{$uuid}}
+  Test3: {{$epoch}}
+  Test4: {{$uuid}}
+  `
+  const yb = new Blaster(input, data)
+  const result = yb.process(input, data)
+  console.log(result)
+  // expect(result).toMatchSnapshot()
 })

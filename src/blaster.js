@@ -8,6 +8,8 @@ const yaml = require('js-yaml')
 const uniq = require('lodash.uniq')
 const {join} = require('path')
 const get = require('lodash.get')
+const uuid = require('uuid')
+const jexl = require('jexl')
 
 const die = (str) => {
   process.exit(typeof str === 'string' ? str : JSON.stringify(str, null, 2))
@@ -17,11 +19,17 @@ class Blaster {
 
   #matchers = {
     tabChar: new RegExp('(?<=\\n)(?!\\n)\\s*(?=.*)', 'g'),
-    var: new RegExp('(?<={{).[^{}]*(?=}})','g'),
+    var: new RegExp('(?<={{)[^$].[^{}]*(?=}})','g'),
+    func: new RegExp('(?<={{)\\$.*(?=}})','g'),
+    fileWithoutTokens: new RegExp('file:.*'),
+    fileWithoutTokensOrQuotes: new RegExp('(?<=\\s|^)file:[a-zA-Z0-9.\\-_]*(?=\\s|$)'),
     file: new RegExp('{{(?!for:).*,\\s*file:.*}}'),
     filePath: new RegExp('(?<=file:).*(?=}})'),
     localFile: new RegExp('{{.*\[[0-9]*\],.*file:.*}}'),
     varPath: new RegExp('(?<={{)(?!for:).*(?=,.*file:.*}})'),
+    expression: new RegExp('(?<={{exp:)[^$].[^{}]*(?=}})', 'g'),
+    shellScript: new RegExp('(?<={{sh:)[^$].[^{}]*(?=}})'),
+    shellScriptVar: new RegExp('\$[a-zA-Z_.]*'),
     fileLocal: {
       full: new RegExp('{{.*\[[0-9]*\],.*file:.*}}'),
       varPath: new RegExp('(?<={{).*(?=,.*file:.*}})')
@@ -38,10 +46,12 @@ class Blaster {
     file: this.handleFile.bind(this),
     localFile: this.handleFilesLocal.bind(this),
     loop: this.expandLoopStatements.bind(this),
-    convertFile: this.convertFile.bind(this)
+    convertFile: this.convertFile.bind(this),
+    expression: this.handleExpressions.bind(this)
   }
   
   #stages = [
+    'expression',
     'loop',
     'convertFile',
     'file'
@@ -63,7 +73,7 @@ class Blaster {
       const tabCharRe = new RegExp('(?<=\\n)(?!\\n)\\s*(?=.*)', 'g')
       const matches = fragment.match(tabCharRe)
       const sorted = uniq(matches).sort((a,b) => a.length - b.length)
-      this.#tabChar = sorted[0] !== '' ? sorted[0] : sorted[1]
+      this.#tabChar = sorted[0] !== '' ? sorted[0] : sorted[1] || '  '
     }
   }
 
@@ -217,11 +227,12 @@ class Blaster {
     const joinedPath = join(inputhPath, filePath)
     const fileFragment = this.loadFragment(joinedPath, match, fragment)
     const pathsUpdated = this.updateVarPaths(fileFragment, varPath)
+    
     return fragment.replace(match, pathsUpdated)
   }
   
   deComment(fragment) {
-    return fragment.replace(this.#matchers.comments, '\n')
+    // return fragment.replace(this.#matchers.comments, '\n')
   }
 
 
@@ -262,17 +273,90 @@ class Blaster {
     return fragment.replace(/{{\.+/g, '{{')
   }
 
+  getEpoch() {
+    this._epoch = this._epoch || new Date().getTime()
+    return this._epoch
+  }
+
+  getUuid() {
+    this._uuid = this._uuid || uuid.v4()
+    return this._uuid
+  }
+
+  handleFunctions(fragment) {
+    const matches = this.getUniqueMatches(fragment, 'function')
+    return fragment
+    return matches.reduce((s,match) => {
+      const re = new RegExp(`{{${match}}}`, 'g')
+      switch(match) {
+        case '$epoch':
+          return s.replace(re, this.getEpoch())
+        case '$uuid':
+          return s.replace(re, this.getUuid())
+        default:
+          throw new Error(`${match} is not a function.`)
+      }
+    }, fragment)
+  }
+
+  escapeRegExp(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\\]/g, '\\$&');
+  }
+
+  handleExpressions(match, idx, fragment, data, inputhPath) {
+      const hasFileWithoutQuotes = this.#matchers.fileWithoutTokensOrQuotes.test(match)
+      if(hasFileWithoutQuotes) {
+        const [fileMatch] = match.match(this.#matchers.fileWithoutTokensOrQuotes)
+        newMatch = match.replace(fileMatch, `"${fileMatch}"`)
+        fragment = fragment.replace(match, newMatch)
+        match = newMatch
+      }
+      const fullMatch = new RegExp(this.escapeRegExp(`{{exp:${match}}}`), 'g')
+      const evaluated = jexl.evalSync(match, data)
+      const isFile = this.#matchers.fileWithoutTokens.test(evaluated)
+      return isFile ? fragment.replace(fullMatch, `{{${evaluated}}}`) : fragment.replace(fullMatch, evaluated === undefined || evaluated === null ? '' : evaluated)
+  }
+  // handleExpressions(fragment, data) {
+  //   const matches = this.getUniqueMatches(fragment, 'expression')
+  //   return matches.reduce((s, match) => {
+  //     const hasFileWithoutQuotes = this.#matchers.fileWithoutTokensOrQuotes.test(match)
+  //     if(hasFileWithoutQuotes) {
+  //       const [fileMatch] = match.match(this.#matchers.fileWithoutTokensOrQuotes)
+  //       newMatch = match.replace(fileMatch, `"${fileMatch}"`)
+  //       s = s.replace(match, newMatch)
+  //       match = newMatch
+  //     }
+  //     const fullMatch = new RegExp(this.escapeRegExp(`{{exp:${match}}}`), 'g')
+  //     const evaluated = jexl.evalSync(match, data)
+  //     const isFile = this.#matchers.fileWithoutTokens.test(evaluated)
+  //     return isFile ? s.replace(fullMatch, `{{${evaluated}}}`) : s.replace(fullMatch, evaluated === undefined || evaluated === null ? '' : evaluated)
+  //   }, fragment)
+  // }
+
+  handleShellScripts(fragment, data) {
+    const matches = this.getUniqueMatches(fragment, 'shellScript')
+    return matches.reduce((s, match) => {
+      const fullMatch = new RegExp(`{{sh:${match}}}`, 'g')
+      const shellVars = this.getUniqueMatches(fragment, 'shellScript')
+      const evaluated = jexl.evalSync(match, data)
+      return s.replace(fullMatch, evaluated)
+    }, fragment)
+  }
+
   process(fragment, data, inputhPath, addlParams) {
-    const deCommented = this.deComment(fragment)
-    const replaced = this.handleEverything(deCommented, data, inputhPath)
-    const dotsFixed = this.fixMultiLeadingDots(replaced)
+    const deCommented = null// = this.deComment(fragment)
     const flatData = this.flatten(data)
+    // const expressionsHandled = this.handleExpressions(deCommented || fragment, flatData)
+    const replaced = this.handleEverything(fragment, data, inputhPath)
+    const dotsFixed = this.fixMultiLeadingDots(replaced)
     if(addlParams) {
       addlParams.forEach(param => {
         flatData[param.key] = param.val
       })
     }
+    // const functionsHandled = this.handleFunctions(dotsFixed)
     const varsHandled = this.handleVars(dotsFixed, flatData)
+    // const scriptsHandled = this.handleShellScripts(expressionsHandled)
     return yaml.safeDump(yaml.safeLoad(varsHandled))
   }
 

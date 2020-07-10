@@ -1,0 +1,9 @@
+Foo: {{exp:stage == "dev" ? bar : baz}}
+Baz: {{exp:stage == "dev" ? baz : bar}}
+Bar: {{exp:stage == "test" ? bar : file:sub.yaml}}
+Bar2: {{exp:stage == "test" ? bar : "file:sub.yaml"}}
+Bar3: {{exp:stage == "dev" ? bar : file:sub.yaml}}
+{{exp:stage == "test" ? file:sub.yaml : null}}
+{{exp:stage == "test" ? null : file:sub.yaml}}
+asdf: {{exp:stage == "test" ? null : "file:sub.yaml"}}
+subTest: {{for:items, file:sub2.yaml}}
