@@ -1,6 +1,6 @@
 {
   "name": "yaml-blaster",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Framework for pre-processing yaml files",
   "main": "dist/blaster.js",
   "scripts": {
@@ -10,7 +10,9 @@
     "cond-install": "if [ ! -d node_modules ]; then npm i; fi;",
     "build": "npm run cond-install && npx webpack --mode production && sh scripts/add_hashbang.sh",
     "preversion": "npm run clean && npm test",
-    "postversion": "git add . && git commit --amend && git push"
+    "postversion": "git add . && git commit --amend && git push",
+    "rm-dev-deps": "cp package.json package.json.bak && cat package.json.bak | jq -rc '.devDependencies = {}' > package.json",
+    "pub": "npm run rm-dev-deps && npm publish && cp package.json.bak package.json"
   },
   "repository": {
     "type": "git",
